@@ -1,0 +1,51 @@
+#!/usr/bin/make -f
+
+export DH_COMPAT=1
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp install-stamp
+	dh_clean
+
+install: install-stamp
+install-stamp: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	dh_installdebconf
+	mkdir -p debian/tmp/usr/share/jython/Lib/site-packages/
+	python setup.py install --prefix=debian/tmp/usr
+
+	# symlink the ampy package in to Jython's site-packages dir
+	# so that it can be imported from Jython without fiddling with
+	# any python path variables
+	ln -s ../../../../lib/python`python -c "import sys; print \".\".join(map(str, sys.version_info[:2]))"`/site-packages/ampy debian/tmp/usr/share/jython/Lib/site-packages/
+
+binary-arch: build install
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_strip
+	#dh_pycentral
+	dh_compress
+	dh_installchangelogs
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb --destdir=.
+
+source diff:
+	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

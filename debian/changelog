@@ -1,0 +1,9 @@
+ampy (1.2.1) stable; urgency=low
+  * Fix bug in asynchronous protocol parser
+ -- Eric Mangold <teratorn@gmail.com>  Sat, 27 May 2008 00:00:00 +0000
+ampy (1.2) stable; urgency=low
+  * Misc changes
+ -- Eric Mangold <teratorn@gmail.com>  Sat, 22 May 2008 00:00:00 +0000
+ampy (1.1) stable; urgency=low
+  * Initial debian package release
+ -- Eric Mangold <teratorn@gmail.com>  Sat, 17 May 2008 00:00:00 +0000
