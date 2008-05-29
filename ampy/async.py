@@ -8,14 +8,15 @@ import asyncore, asynchat, socket, struct, sys
 import defer, ampy
 
 class AMP_Server(asyncore.dispatcher):
-    def __init__(self, port):
+    def __init__(self, port, bindHost="0.0.0.0"):
         self.port = port
+        self.bindHost = bindHost
         asyncore.dispatcher.__init__(self) # we get added to the global asyncore "map" here
 
     def start_listening(self):
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.bind(("127.0.0.1", self.port))
+        self.bind((self.bindHost, self.port))
         self.listen(10)
 
     def loop(self):
@@ -86,8 +87,6 @@ class AMP_Protocol(asynchat.async_chat):
 
     def found_terminator(self):
         # handle buffered data and transition state
-
-        print 'found_terminator', self.state, self.ibuffer
 
         if self.state == KEY_LEN_READ:
             # keys should never be longer that 255 bytes, but we aren't actually
