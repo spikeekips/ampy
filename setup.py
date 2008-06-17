@@ -4,7 +4,7 @@ from distutils.core import setup
 
 if __name__ == '__main__':
     setup(name="ampy",
-            version="1.2.2",
+            version="1.2.3",
             description="Ampy - The pure-Python AMP library",
             author="Eric Mangold",
             author_email="teratorn@gmail.com",

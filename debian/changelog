@@ -1,3 +1,8 @@
+ampy (1.2.3) stable; urgency=low
+  * Implement per-command AMP error codes
+  * Parameterize address to bind (listen) on
+  * Remove debug prints
+ -- Eric Mangold <teratorn@gmail.com>  Tue, 17 Jun 2008 00:00:00 +0000
 ampy (1.2.1) stable; urgency=low
   * Fix bug in asynchronous protocol parser
  -- Eric Mangold <teratorn@gmail.com>  Sat, 27 May 2008 00:00:00 +0000

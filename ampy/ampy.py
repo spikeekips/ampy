@@ -71,7 +71,7 @@ class Command:
     arguments = []
     response = []
     errors = {}
-    fatalErrors = {}
+    #fatalErrors = {} # NOT IMPLEMENTED YET
     requiresAnswer = True
 
     class __metaclass__(type):

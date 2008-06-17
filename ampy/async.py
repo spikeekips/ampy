@@ -170,13 +170,19 @@ class AMP_Protocol(asynchat.async_chat):
         self.push(''.join(ampy.insertPrefixes(dataList)))
 
     def _eb_gotResponseError(self, f, command, askKey):
-        # XXX TODO implement a per-command mapping of local Exception classes to AMP error codes
-        sys.stderr.write("Unhandled exception raised in AMP Command handler:\n")
-        f.printTraceback()
+        key = f.check(*command.errors.keys())
+        if key:
+            code = command.errors[key]
+            descr = "" # TODO what should go here?
+        else:
+            sys.stderr.write("Unhandled exception raised in AMP Command handler:\n")
+            f.printTraceback()
+            code = ampy.UNKNOWN_ERROR_CODE
+            descr = "Unknown Error"
 
         resp = [ampy.ERROR, askKey,
-                ampy.ERROR_CODE, ampy.UNKNOWN_ERROR_CODE,
-                ampy.ERROR_DESCRIPTION, "Specific error codes not implemented yet!"]
+                ampy.ERROR_CODE, code,
+                ampy.ERROR_DESCRIPTION, descr]
         self.push(''.join(ampy.insertPrefixes(resp)))
 
     def callRemote(self, command, **kw):
