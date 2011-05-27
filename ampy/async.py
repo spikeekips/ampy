@@ -8,14 +8,15 @@ import asyncore, asynchat, socket, struct, sys
 import defer, ampy
 
 class AMP_Server(asyncore.dispatcher):
-    def __init__(self, port):
+    def __init__(self, port, bindHost="0.0.0.0"):
         self.port = port
+        self.bindHost = bindHost
         asyncore.dispatcher.__init__(self) # we get added to the global asyncore "map" here
 
     def start_listening(self):
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.bind(("127.0.0.1", self.port))
+        self.bind((self.bindHost, self.port))
         self.listen(10)
 
     def loop(self):
@@ -86,8 +87,6 @@ class AMP_Protocol(asynchat.async_chat):
 
     def found_terminator(self):
         # handle buffered data and transition state
-
-        print 'found_terminator', self.state, self.ibuffer
 
         if self.state == KEY_LEN_READ:
             # keys should never be longer that 255 bytes, but we aren't actually
@@ -171,13 +170,19 @@ class AMP_Protocol(asynchat.async_chat):
         self.push(''.join(ampy.insertPrefixes(dataList)))
 
     def _eb_gotResponseError(self, f, command, askKey):
-        # XXX TODO implement a per-command mapping of local Exception classes to AMP error codes
-        sys.stderr.write("Unhandled exception raised in AMP Command handler:\n")
-        f.printTraceback()
+        key = f.check(*command.errors.keys())
+        if key:
+            code = command.errors[key]
+            descr = "" # TODO what should go here?
+        else:
+            sys.stderr.write("Unhandled exception raised in AMP Command handler:\n")
+            f.printTraceback()
+            code = ampy.UNKNOWN_ERROR_CODE
+            descr = "Unknown Error"
 
         resp = [ampy.ERROR, askKey,
-                ampy.ERROR_CODE, ampy.UNKNOWN_ERROR_CODE,
-                ampy.ERROR_DESCRIPTION, "Specific error codes not implemented yet!"]
+                ampy.ERROR_CODE, code,
+                ampy.ERROR_DESCRIPTION, descr]
         self.push(''.join(ampy.insertPrefixes(resp)))
 
     def callRemote(self, command, **kw):
