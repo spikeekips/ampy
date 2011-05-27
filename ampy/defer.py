@@ -5,8 +5,6 @@
 
 """
 Support for results that aren't immediately available.
-
-Maintainer: U{Glyph Lefkowitz<mailto:glyph@twistedmatrix.com>}
 """
 
 from __future__ import nested_scopes, generators

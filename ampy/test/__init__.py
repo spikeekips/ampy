@@ -1,3 +1,3 @@
-# Copyright (c) 2006 Eric Paul Mangold
+# Copyright (c) 2006 Eric P. Mangold
 # See LICENSE for details.
 
