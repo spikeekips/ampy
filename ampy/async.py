@@ -64,7 +64,7 @@ class AMP_Protocol(asynchat.async_chat):
     responders = {}
 
     def __init__(self, conn, addr):
-        asynchat.async_chat.__init__(self, conn=conn)
+        asynchat.async_chat.__init__(self, conn)
         self.addr = addr
         self.ibuffer = []
         self.obuffer = ""
