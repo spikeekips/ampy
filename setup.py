@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# copyright (c) 2008 Eric P. Mangold
+# copyright (c) 2008-2013 Eric P. Mangold
 # See LICENSE for details
 
 from distutils.core import setup
