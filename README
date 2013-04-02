@@ -11,10 +11,10 @@ Synchronous Client Example:
 from ampy import ampy
 
 class Sum(ampy.Command):
-    arguments = [('a', ampy.Integer), ('b', ampy.Integer)]
-    response = [('total', ampy.Integer)]
+    arguments = [('a', ampy.Integer()), ('b', ampy.Integer())]
+    response = [('total', ampy.Integer())]
 
 proxy = ampy.Proxy('localhost', 1234)
+proxy.connect()
 result = proxy.callRemote(Sum, a=5, b=10)
 print "TOTAL:", result['total']
-
