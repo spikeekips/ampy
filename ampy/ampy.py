@@ -216,6 +216,8 @@ class Proxy:
             return self.ssl.read(bufsize)
         else:
             data = self.sock.recv(bufsize)
+            if len(data) < 1 :
+                raise socket.error
             while len(data) < bufsize:
                 data += self.sock.recv(bufsize-len(data))
             return data
