@@ -1,4 +1,4 @@
-Ampy, the pure-Python AMP client and server
+# Ampy, the pure-Python AMP client and server
 
 Ampy is an AMP library that provides a syncronous, blocking interface
 for making AMP calls (client interface).
