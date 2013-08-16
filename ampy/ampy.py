@@ -24,6 +24,9 @@ class AMPError(Exception):
 
 class Argument:
     """Base class of AMP arguments"""
+    def __init__ (self, optional=False, ) :
+        self.optional = optional
+
     def fromString(self, bytes):
         raise NotImplementedError
 
@@ -67,6 +70,48 @@ class Unicode(Argument):
     def toString(self, obj):
         return obj.encode('utf-8')
 
+class ListOf(Argument):
+    def __init__(self, elementType):
+        self.elementType = elementType
+
+    def fromString (self, inString, ) :
+        """
+        this code was derived from `twisted.protocols.basic.Int16StringReceiver`.
+        """
+        strings = list()
+
+        structFormat = '!H'
+        prefixLength = struct.calcsize(structFormat)
+
+        alldata = inString
+        currentOffset = 0
+        fmt = structFormat
+
+        while len(alldata) >= (currentOffset + prefixLength) :
+            messageStart = currentOffset + prefixLength
+            length, = struct.unpack(fmt, alldata[currentOffset:messageStart])
+            if length > MAX_VALUE_LENGTH:
+                return
+
+            messageEnd = messageStart + length
+            if len(alldata) < messageEnd:
+                break
+
+            packet = alldata[messageStart:messageEnd]
+            currentOffset = messageEnd
+            strings.append(packet)
+
+        return map(self.elementType.fromString, strings, )
+
+    def toString(self, inObject):
+        strings = []
+        for obj in inObject:
+            serialized = self.elementType.toString(obj)
+            strings.append(struct.pack('!H', len(serialized)))
+            strings.append(serialized)
+        return ''.join(strings)
+
+
 class Command:
     arguments = []
     response = []
@@ -84,6 +129,9 @@ class Command:
         """Serialize and append data to the given list"""
         kw = kw.copy()
         for argName, argType in cls.arguments:
+            if argName not in kw and argType.optional :
+                continue
+
             argValue = argType.toString(kw[argName])
             del kw[argName]
             if len(argName) > MAX_KEY_LENGTH:
